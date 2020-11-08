@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.datatables.demo.mapper.UserMapper">
+  <resultMap id="BaseResultMap" type="com.datatables.demo.bean.User">
+    <id column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="user_addr" jdbcType="VARCHAR" property="userAddr" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="role_id" jdbcType="INTEGER" property="roleId" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    user_id, user_name, user_addr, role_id
+  </sql>
+
+
+  <!-- 查询分页数据 -->
+  <select id="getUserList" parameterType="com.datatables.demo.bean.User" resultMap="BaseResultMap">
+      select * from user where 1=1
+      <if test="userName != null ">
+        and INSTR(user_name, #{userName}) &gt; 0
+      </if>
+      <if test="userAddr != null ">
+        and INSTR(user_addr, #{userAddr}) &gt; 0
+      </if>
+      <if test="status != null ">
+        and status = #{status}
+      </if>
+      <if test="roleId != null ">
+        and role_id = #{roleId}
+      </if>
+      <if test="startDate != null and endDate != null ">
+          and DATE(create_date) BETWEEN  #{startDate} AND #{endDate}
+      </if>
+   </select>
+
+  <!-- 查询数据总条数 -->
+  <select id="getUserListCount" resultType="int">
+      select count(*) from user where 1=1
+      <if test="userName != null ">
+        and INSTR(user_name, #{userName}) &gt; 0
+      </if>
+      <if test="userAddr != null ">
+        and INSTR(user_addr, #{userAddr}) &gt; 0
+      </if>
+      <if test="status != null ">
+        and status = #{status}
+      </if>
+      <if test="roleId != null ">
+        and role_id = #{roleId}
+      </if>
+      <if test="startDate != null and endDate != null ">
+          and DATE(create_date) BETWEEN  #{startDate} AND #{endDate}
+      </if>
+  </select>
+
+  <insert id="insert" parameterType="com.datatables.demo.bean.User">
+    insert into user (user_name, user_addr, status,
+      role_id, create_date)
+    values ( #{userName,jdbcType=VARCHAR}, #{userAddr,jdbcType=VARCHAR},
+      #{status,jdbcType=INTEGER}, #{roleId,jdbcType=INTEGER}, #{createDate})
+  </insert>
+
+  <delete id="delete" parameterType="java.lang.Integer">
+    delete from user where user_id = #{userId}
+  </delete>
+
+  <select id="getById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select * from user where user_id = #{userId}
+  </select>
+
+
+  <update id="updateById" parameterType="com.datatables.demo.bean.User">
+    update user
+    set user_name = #{userName,jdbcType=VARCHAR},
+      user_addr = #{userAddr,jdbcType=VARCHAR},
+      status = #{status},
+      role_id = #{roleId,jdbcType=INTEGER}
+    where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+</mapper>

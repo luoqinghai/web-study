@@ -1,0 +1,8 @@
+com\datatables\demo\service\impl\UserServiceImpl.class
+com\datatables\demo\common\page\Page.class
+com\datatables\demo\mapper\UserMapper.class
+com\datatables\demo\DatatablesDemoApplication.class
+com\datatables\demo\controller\UserController.class
+com\datatables\demo\service\UserService.class
+com\datatables\demo\common\res\R.class
+com\datatables\demo\bean\User.class

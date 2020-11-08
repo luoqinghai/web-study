@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="/bootstrap/css/bootstrap.min.css"  rel="stylesheet" type="text/css"  />
+    <link href="/DataTables/DataTables-1.10.18/css/dataTables.bootstrap.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/css/daterangepicker-bs3.css"/>
+    <script type="text/javascript" src="/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="/DataTables/DataTables-1.10.18/js/jquery.dataTables.min.js" ></script>
+    <script type="text/javascript" src="/DataTables/DataTables-1.10.18/js/dataTables.bootstrap.js" ></script>
+    <script type="text/javascript" src="/bootstrap/js/bootstrap.js"></script>
+    <script type="text/javascript" src="/js/moment.js"></script>
+    <script type="text/javascript" src="/js/daterangepicker.js"></script>
+</head>
+<body>
+<div  class="row" style="margin-top:20px;">
+    <div class="col-lg-12 col-lg-offset-1">
+        <form class="form-inline">
+            <div class="form-group">
+                <input type="text" class="form-control" id="userName" placeholder="用户名">
+            </div>
+
+            <div class="form-group">
+                <input type="text" class="form-control" id="userAddr" placeholder="用户地址">
+            </div>
+
+            <div class="form-group">
+                <select id="status" class="form-control">
+                    <option value="-1">状态</option>
+                    <option value="1">通过</option>
+                    <option value="0">驳回</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <select id="roleId" class="form-control">
+                    <option value="-1">角色</option>
+                    <option value="1">普通用户</option>
+                    <option value="2">管理员</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <div class="controls">
+                    <div class="input-prepend input-group">
+                <span class="add-on input-group-addon"><i class="glyphicon glyphicon-calendar fa fa-calendar"></i></span>
+                <input type="text" readonly style="width: 200px" name="reservation" id="reservation" class="form-control" value="" />
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+
+            <button type=button class="btn btn-success" id="searchButton"> 条 件 查 询 </button>
+            <button type=button class="btn btn-warning" id="clearSearchButton"> 清 空 条 件 </button>
+            <button type=button class="btn btn-primary" id="addButton" >添加用户</button>
+        </form>
+
+
+    </div>
+
+    <div class="table-responsive col-lg-10 col-lg-offset-1" >
+        <table id="table_id" class="table table-bordered table-hover">
+            <thead>
+            <tr>
+                <th class="text-center">序号</th>
+                <th class="text-center">ID</th>
+                <th class="text-center">用户名</th>
+                <th class="text-center">用户地址</th>
+                <th class="text-center">创建时间</th>
+                <th class="text-center">状态</th>
+                <th class="text-center">角色名</th>
+                <th class="text-center">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- 添加模态框 -->
+<div id="addModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">添加用户</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <input type="text" class="form-control" id="addUserName" placeholder="用户名">
+                </div>
+
+                <div class="form-group">
+                    <input type="text" class="form-control" id="addUserAddr" placeholder="用户地址">
+                </div>
+
+                <div class="form-group">
+                    <select id="addStatus" class="form-control">
+                        <option value="-1">请选择状态</option>
+                        <option value="1">通过</option>
+                        <option value="0">驳回</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <select id="addRole" class="form-control">
+                        <option value="-1">请选择角色</option>
+                        <option value="1">普通用户</option>
+                        <option value="2">管理员</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="addUser()">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 修改模态框 -->
+<div id="updateModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">修改用户</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <input type="text" class="form-control" id="updateUserName" placeholder="用户名">
+                </div>
+
+                <div class="form-group">
+                    <input type="text" class="form-control" id="updateUserAddr" placeholder="用户地址">
+                </div>
+
+                <div class="form-group">
+                    <select id="updateStatus" class="form-control">
+                        <option value="-1">请选择状态</option>
+                        <option value="1">通过</option>
+                        <option value="0">驳回</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <select id="updateRole" class="form-control">
+                        <option value="-1">请选择角色</option>
+                        <option value="1">普通用户</option>
+                        <option value="2">管理员</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="updateUser()">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var datatables_options = {
+        language : {
+            "lengthMenu" : '每页显示<select class="form-control input-xsmall">' + '<option value="10">10</option>'
+                + '<option value="20">20</option>'
+                + '<option value="30">30</option>'
+                + '<option value="40">40</option>'
+                + '<option value="50">50</option>' + '</select>条',
+            "paginate" : {
+                "first" : "首页",
+                "last" : "尾页",
+                "previous" : "上一页",
+                "next" : "下一页"
+            },
+            "processing" : "加载中...",  //DataTables载入数据时，是否显示‘进度’提示
+            "emptyTable" : "暂无数据",
+            "info" : "共 _PAGES_ 页  _TOTAL_ 条数据  ",
+            "infoEmpty" : "暂无数据",
+            "emptyTable" : "暂无要处理的数据...",  //表格中无数据
+            "search": "搜索:",
+            "infoFiltered" : " —— 从  _MAX_ 条数据中筛选",
+            "zeroRecords":    "没有找到记录"
+
+        },
+        ordering:  false,//排序显示控制
+        searching : false,
+        paging: true,//开启分页
+        processing : true,
+        serverSide : true,//是否开启服务器模式
+        ajax : {
+            url: '/user/list',
+            type: 'post',
+            cache: false,
+            data : function(d){
+                var user = {};
+                user.userName = $("#userName").val();
+                user.userAddr = $("#userAddr").val();
+                user.status = $("#status").val();
+                user.roleId = $("#roleId").val();
+                user.date = $("#reservation").val();
+                user.pageSize = d.length;
+                user.draw = d.draw;
+                user.offset = d.start;
+                return user;
+            },
+            dataFilter : function(json){
+
+                json = JSON.parse(json);
+
+                var returnData = {};
+                returnData.draw = json.draw;
+                returnData.recordsTotal = json.recordsTotal;  //返回数据全部记录
+                returnData.recordsFiltered = json.recordsFiltered;  //后台不实现过滤功能，每次查询均视作全部结果
+                returnData.data = json.data;  //返回的数据列表
+                return JSON.stringify(returnData); //这几个参数都是datatable需要的，必须要
+
+            }
+        },
+        columns: [
+            {
+                "data" : null,
+                "orderable" : false,
+                "sClass": "text-center"
+            },
+            {
+                "data": "userId",
+                "name" : "id",
+                "orderable" : true,
+                "sDefaultContent":"",  //默认空字符串
+                "sClass": "text-center"
+            },
+            {
+                "orderable" : false,
+                "data": "userName",
+                'sClass': "text-center"
+            },
+            {
+                "orderable" : false,
+                "data": "userAddr",
+                'sClass': "text-center"
+            },
+            {
+                "orderable" : false,
+                "data": "createDate",
+                'sClass': "text-center",
+                "render": function ChangeDateFormat(date) {
+                    var dateee = new Date(date).toJSON();
+                    return new Date(+new Date(dateee) + 8 * 3600 * 1000).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '')
+                }
+            },
+            {
+                "orderable" : false,
+                "data": "status",
+                'sClass': "text-center",
+                'render': function (data, type,row,meta){
+                    var status = row.status
+                    var str  = ''
+                    if(status == 1){
+                        str = '通过'
+                    }
+                    if(status == 0){
+                        str = '驳回'
+                    }
+                    return str
+
+                }
+            },
+            {
+                "orderable" : false,
+                "data": "roleId",
+                'sClass': "text-center",
+                'render': function (data, type,row,meta){
+                    var roleId = row.roleId
+                    var str  = ''
+                    if(roleId == 1){
+                        str = '普通用户'
+                    }
+                    if(roleId == 2){
+                        str = '管理员'
+                    }
+                    return str
+
+                }
+            },
+            {
+                "orderable" : false,
+                "targets" : 2,//操作按钮目标列
+                "data" : null,
+                "sWidth" :"250px",
+                'sClass': "text-center",
+                "render" : function(data, type,row,meta) {
+                    var id = '"' + row.userId + '"';
+                    var html = "";
+                    html += "<button onclick='edit("+ id +")'  style='margin-right:10px;' class='up btn btn-warning '>编辑</button>"
+                    html += "<a href='javascript:void(0);'   onclick='deleteData("+id+ ")'  class='down btn btn-danger '> 删除</a>"
+                    return html;
+                }
+            }
+
+        ],
+        fnDrawCallback :function () {
+            let api = this.api();
+            let startIndex = api.context[0]._iDisplayStart;//获取本页开始的条数
+            api.column(0).nodes().each(function(cell, i) {
+                cell.innerHTML = startIndex + i + 1;
+            });
+        }
+    };
+
+
+
+
+
+    var firstTable;
+    firstTable = $('#table_id').DataTable(datatables_options);
+
+
+    $("#addButton").click(function(){
+        $("#addModal").modal()
+    })
+
+    function addUser() {
+        $.ajax({
+            type:"post",
+            url:"/user/add",
+            async:true,
+            data:{
+                userName: $("#addUserName").val(),
+                userAddr: $("#addUserAddr").val(),
+                status: $("#addStatus").val(),
+                roleId: $("#addRole").val()
+            },
+            success:function(res){
+                // 刷新表格数据，分页信息不会重置
+                firstTable.ajax.reload(null,false);
+                //清空添加表单数据
+                clearAddData();
+                alert(res)
+            }
+        });
+    }
+
+    function clearAddData(){
+        $("#addUserName").val('')
+        $("#addUserAddr").val('')
+        $("#addStatus").val(-1)
+        $("#addRole").val(-1)
+    }
+
+    /**
+     * 删除
+     */
+    function deleteData(id) {
+        $.ajax({
+            type:"get",
+            url:"/user/delete",
+            async:true,
+            data:{
+                userId: id
+            },
+            success:function(res){
+                // 刷新表格数据，分页信息不会重置
+                firstTable.ajax.reload(null,false);
+
+                alert(res)
+            }
+        });
+    }
+
+    //全局用户id
+    var userId;
+    function edit(id) {
+        $.ajax({
+            type:"get",
+            url:"/user/get",
+            async:true,
+            data:{
+                userId: id
+            },
+            success:function(res){
+                //设置回显用户数据
+                userId = res.userId //赋值给全局id，方便修改后使用
+                $("#updateUserName").val(res.userName)
+                $("#updateUserAddr").val(res.userAddr)
+                $("#updateStatus").val(res.status)
+                $("#updateRole").val(res.roleId)
+                $("#updateModal").modal()
+            }
+        });
+    }
+
+    function updateUser() {
+        $.ajax({
+            type:"post",
+            url:"/user/update",
+            async:true,
+            data:{
+                userId: userId,
+                userName: $("#updateUserName").val(),
+                userAddr: $("#updateUserAddr").val(),
+                status: $("#updateStatus").val(),
+                roleId: $("#updateRole").val()
+            },
+            success:function(res){
+                // 刷新表格数据，分页信息不会重置
+                firstTable.ajax.reload(null,false);
+
+                alert(res)
+            }
+        });
+    }
+
+    $("#searchButton").click(function(){
+        firstTable.ajax.reload(null,false);
+        firstTable.draw(false);
+
+    });
+
+    $("#clearSearchButton").click(function(){
+        $("#userName").val('');
+        $("#userAddr").val('');
+        $("#status").val(-1);
+        $("#roleId").val(-1);
+        $("#reservation").val('')
+    });
+
+    //日期范围选择器
+    $('#reservation').daterangepicker(null, function(start, end, label) {
+        console.log(start.toISOString(), end.toISOString(), label);
+    });
+</script>
+
+
+</body>
+</html>
